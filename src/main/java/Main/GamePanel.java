@@ -13,8 +13,9 @@ import static Main.Color.*;
 public class GamePanel extends JPanel {
     BufferedImage blackImg, whiteImg, possibleImg;
     Board ourBoard;
-    int size = 80;
-    int gap = 5;
+    static final int squareAmount = 8;
+    static final int squareSize = 80;
+    static final int squareGap = 5;
     public GamePanel(Board board) {
         super();
         ourBoard = board;
@@ -42,25 +43,27 @@ public class GamePanel extends JPanel {
 
     public void drawBoard(Graphics2D g) {
         g.setColor(Color.GREEN);
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                g.fillRect(i * size + gap, j * size + gap, size - gap, size - gap);
+        for (int i = 0; i < squareAmount; i++) {
+            for (int j = 0; j < squareAmount; j++) {
+                int x=i * (squareSize + squareGap) + squareGap;
+                int y=j * (squareSize + squareGap) + squareGap;
+                g.fillRect(x, y, squareSize, squareSize);
             }
         }
     }
 
     public void drawPieces(Graphics2D g) {
         Piece[][] cords = ourBoard.getBoardMap();
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                int x = i * size + gap;
-                int y = j * size + gap;
+        for (int i = 0; i < squareAmount; i++) {
+            for (int j = 0; j < squareAmount; j++) {
+                int x = i * (squareSize + squareGap) + squareGap;
+                int y = j * (squareSize + squareGap) + squareGap;
                 if (cords[i][j].color == White) {
-                    g.drawImage(whiteImg, x, y, size - gap, size - gap, this);
+                    g.drawImage(whiteImg, x, y, squareSize, squareSize, this);
                 } else if (cords[i][j].color == Black) {
-                    g.drawImage(blackImg, x, y, size - gap, size - gap, this);
+                    g.drawImage(blackImg, x, y, squareSize, squareSize, this);
                 } else if (cords[i][j].color == CanPlace) {
-                    g.drawImage(possibleImg, x, y, size - gap, size - gap, this);
+                    g.drawImage(possibleImg, x, y, squareSize, squareSize, this);
                 }
             }
         }
