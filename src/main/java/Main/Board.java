@@ -1,6 +1,9 @@
 package Main;
 
+import jdk.jfr.Event;
+
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import static Main.Color.*;
@@ -8,14 +11,16 @@ import static Main.Util.isWithinBounds;
 
 public class Board {
     private Piece[][] boardMap = new Piece[8][8];
-    Color whoseMove=Black;
-    Color whoseNotMove=White;
+    EventManager eventManager;
+    Player whoseMove;
+    Player whoseNotMove;
     boolean endgame=false;
+
     public boolean isEndgame() {
         return endgame;
     }
 
-    Board() {
+    public Board(Player playerWhite, Player playerBlack) {
         for (int i = 0; i < 8; i ++)
             for (int j = 0; j < 8; j ++) {
                 boardMap[i][j] = new Piece(Empty,i,j);
@@ -24,15 +29,24 @@ public class Board {
         boardMap[4][4]= new Piece(White,4,4);
         boardMap[4][3]= new Piece(Black, 4, 3);
         boardMap[3][4]= new Piece(Black,3,4);
+        whoseMove=playerBlack;
+        whoseNotMove=playerWhite;
+        eventManager = new EventManager();
+    }
+
+    public void boardLoop() {
+        determinePossibleMoves();
+        eventManager.notifyObservers(this);
+        if(!endgame) readInput(whoseMove);
     }
 
     public void determinePossibleMoves() {
-        ArrayList<Piece> pieceList = createPieceList(whoseMove);
+        ArrayList<Piece> pieceList = createPieceList(whoseMove.color);
         for (Piece piece:pieceList)
             determinePieceNextMove(piece);
         if (createPieceList(CanPlace).isEmpty()) {
             updateRound();
-            pieceList = createPieceList(whoseNotMove);
+            pieceList = createPieceList(whoseMove.color);
             if (createPieceList(CanPlace).isEmpty()) {
                 endgame = true;
             }
@@ -40,14 +54,15 @@ public class Board {
     }
 
     public void executeNextMove(int x, int y) {
-        boardMap[x][y].color = whoseMove;
+        System.out.println("Player " + whoseMove.color.toString() + " moved to " + x + " " + y + ".");
+        boardMap[x][y].color = whoseMove.color;
         changePieceColor(boardMap[x][y]);
         updateRound();
     }
 
     private void updateRound() {
         cleanPossibleMoves();
-        Color temp = whoseMove;
+        Player temp = whoseMove;
         whoseMove = whoseNotMove;
         whoseNotMove = temp;
     }
@@ -56,10 +71,12 @@ public class Board {
         for (Integer[] item:piece.getPrevCords()) {
             int x = piece.x - item[0];
             int y = piece.y - item[1];
-            while(boardMap[x][y].color == whoseNotMove) {
-                boardMap[x][y].color = whoseMove;
-                x = x - item[0];
-                y = y - item[1];
+            if(isWithinBounds(x,y)) {
+                while(isWithinBounds(x, y) && boardMap[x][y].color == whoseNotMove.color) {
+                    boardMap[x][y].color = whoseMove.color;
+                    x = x - item[0];
+                    y = y - item[1];
+                }
             }
         }
     }
@@ -76,14 +93,15 @@ public class Board {
         for (Integer[] dir : directions) {
             int x = piece.x + dir[0];
             int y = piece.y + dir[1];
-            if (isWithinBounds(x,y) && boardMap[x][y].color == whoseNotMove) {
-                while(boardMap[x][y].color != Empty && boardMap[x][y].color != CanPlace)
-                {
+            if (isWithinBounds(x, y) && boardMap[x][y].color == whoseNotMove.color) {
+                while (isWithinBounds(x, y) && boardMap[x][y].color != Empty && boardMap[x][y].color != CanPlace) {
                     x = x + dir[0];
                     y = y + dir[1];
                 }
-                boardMap[x][y].color = CanPlace;
-                boardMap[x][y].addPrevCords(dir);
+                if (isWithinBounds(x, y) && boardMap[x][y].color == Empty) {
+                    boardMap[x][y].color = CanPlace;
+                    boardMap[x][y].addPrevCords(dir);
+                }
             }
         }
     }
@@ -106,22 +124,22 @@ public class Board {
         return createPieceList(color).size();
     }
 
-    public void readInput() {
-        Scanner input = new Scanner(System.in);
-        int y = 0;
-        int x = 0;
-        try {
-            System.out.println("Enter value x:");
-            x = input.nextInt()-1;
-            System.out.println("Enter value y:");
-            y = input.nextInt()-1;
-            if (!isWithinBounds(x,y) || getBoardMap()[x][y].color != CanPlace) {
-                throw new Exception("Error");
+    public void readInput(Player player) {
+        int[] cords={0,0}; //x,y
+        boolean isValidMove = false;
+        while (!isValidMove) {
+            try {
+                cords = player.makeMove();
+                if (!isWithinBounds(cords[0], cords[1]) || getBoardMap()[cords[0]][cords[1]].color != CanPlace) {
+                    throw new Exception("Invalid move");
+                }
+                isValidMove = true;
+            } catch (Exception e) {
+                if(player.isHuman)
+                    System.out.println("Invalid input. Please try again.");
             }
-        } catch (Exception e) {
-            System.out.println("Wrong value");
-            readInput();;
         }
-        executeNextMove(x,y);
+        executeNextMove(cords[0], cords[1]);
     }
+
 }

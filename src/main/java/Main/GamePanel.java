@@ -10,15 +10,15 @@ import java.io.IOException;
 
 import static Main.Color.*;
 
-public class GamePanel extends JPanel {
+public class GamePanel extends JPanel implements GameListener {
     BufferedImage blackImg, whiteImg, possibleImg;
     Board ourBoard;
     static final int squareAmount = 8;
     static final int squareSize = 80;
     static final int squareGap = 5;
-    public GamePanel(Board board) {
+    public GamePanel() {
         super();
-        ourBoard = board;
+        ourBoard = new Board(new PlayerAI(White), new PlayerAI(Black));
         try {
             blackImg = ImageIO.read(new File("src/main/resources/black.png"));
             whiteImg = ImageIO.read(new File("src/main/resources/white.png"));
