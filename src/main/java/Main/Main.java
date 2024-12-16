@@ -1,8 +1,5 @@
 package Main;
 
-import java.awt.*;
-import java.util.Scanner;
-
 public class Main {
     public static void main(String[] args) {
         PlayerFactory factory = new PlayerFactory();
@@ -11,7 +8,7 @@ public class Main {
         LoggerBoard loggerBoard = new LoggerBoard();
         board.eventManager.addObserver(visualBoard);
         board.eventManager.addObserver(loggerBoard);
-        while(!board.isEndgame()) {
+        while (!board.isEndgame()) {
             board.boardLoop();
         }
         System.out.println("Game ended. Result: Black - " + board.getPieceAmount(Color.Black) + ", White - " + board.getPieceAmount(Color.White) + ".");

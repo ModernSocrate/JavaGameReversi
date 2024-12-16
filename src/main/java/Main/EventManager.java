@@ -9,6 +9,7 @@ public class EventManager {
     public void addObserver(GameListener observer) {
         observers.add(observer);
     }
+
     public void notifyObservers(Board board) {
         for (GameListener observer : observers) {
             observer.updateBoard(board);

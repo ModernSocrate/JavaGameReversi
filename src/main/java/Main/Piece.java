@@ -4,8 +4,9 @@ import java.util.ArrayList;
 
 public class Piece {
     public Color color;
-    public int x,y;
+    public int x, y;
     private ArrayList<Integer[]> prevCords = new ArrayList<>();
+
     public Piece(Color color, int x, int y) {
         this.color = color;
         this.x = x;

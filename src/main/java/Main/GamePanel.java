@@ -2,8 +2,8 @@ package Main;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.Color;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +16,7 @@ public class GamePanel extends JPanel implements GameListener {
     static final int squareAmount = 8;
     static final int squareSize = 80;
     static final int squareGap = 5;
+
     public GamePanel() {
         super();
         ourBoard = new Board(new PlayerAI(White), new PlayerAI(Black));
@@ -45,8 +46,8 @@ public class GamePanel extends JPanel implements GameListener {
         g.setColor(Color.GREEN);
         for (int i = 0; i < squareAmount; i++) {
             for (int j = 0; j < squareAmount; j++) {
-                int x=i * (squareSize + squareGap) + squareGap;
-                int y=j * (squareSize + squareGap) + squareGap;
+                int x = i * (squareSize + squareGap) + squareGap;
+                int y = j * (squareSize + squareGap) + squareGap;
                 g.fillRect(x, y, squareSize, squareSize);
             }
         }

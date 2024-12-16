@@ -1,5 +1,5 @@
 package Main;
 
 public enum Type {
-    HUMAN,AI
+    HUMAN, AI
 }

@@ -1,10 +1,6 @@
 package Main;
 
-import jdk.jfr.Event;
-
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 
 import static Main.Color.*;
 import static Main.Util.isWithinBounds;
@@ -14,35 +10,35 @@ public class Board {
     EventManager eventManager;
     Player whoseMove;
     Player whoseNotMove;
-    boolean endgame=false;
+    boolean endgame = false;
 
     public boolean isEndgame() {
         return endgame;
     }
 
     public Board(Player playerWhite, Player playerBlack) {
-        for (int i = 0; i < 8; i ++)
-            for (int j = 0; j < 8; j ++) {
-                boardMap[i][j] = new Piece(Empty,i,j);
+        for (int i = 0; i < 8; i++)
+            for (int j = 0; j < 8; j++) {
+                boardMap[i][j] = new Piece(Empty, i, j);
             }
-        boardMap[3][3]= new Piece(White,3,3);
-        boardMap[4][4]= new Piece(White,4,4);
-        boardMap[4][3]= new Piece(Black, 4, 3);
-        boardMap[3][4]= new Piece(Black,3,4);
-        whoseMove=playerBlack;
-        whoseNotMove=playerWhite;
+        boardMap[3][3] = new Piece(White, 3, 3);
+        boardMap[4][4] = new Piece(White, 4, 4);
+        boardMap[4][3] = new Piece(Black, 4, 3);
+        boardMap[3][4] = new Piece(Black, 3, 4);
+        whoseMove = playerBlack;
+        whoseNotMove = playerWhite;
         eventManager = new EventManager();
     }
 
     public void boardLoop() {
         determinePossibleMoves();
         eventManager.notifyObservers(this);
-        if(!endgame) readInput(whoseMove);
+        if (!endgame) readInput(whoseMove);
     }
 
     public void determinePossibleMoves() {
         ArrayList<Piece> pieceList = createPieceList(whoseMove.color);
-        for (Piece piece:pieceList)
+        for (Piece piece : pieceList)
             determinePieceNextMove(piece);
         if (createPieceList(CanPlace).isEmpty()) {
             updateRound();
@@ -68,11 +64,11 @@ public class Board {
     }
 
     private void changePieceColor(Piece piece) {
-        for (Integer[] item:piece.getPrevCords()) {
+        for (Integer[] item : piece.getPrevCords()) {
             int x = piece.x - item[0];
             int y = piece.y - item[1];
-            if(isWithinBounds(x,y)) {
-                while(isWithinBounds(x, y) && boardMap[x][y].color == whoseNotMove.color) {
+            if (isWithinBounds(x, y)) {
+                while (isWithinBounds(x, y) && boardMap[x][y].color == whoseNotMove.color) {
                     boardMap[x][y].color = whoseMove.color;
                     x = x - item[0];
                     y = y - item[1];
@@ -83,13 +79,13 @@ public class Board {
 
     private void cleanPossibleMoves() {
         ArrayList<Piece> pieceList = createPieceList(CanPlace);
-        for (Piece piece:pieceList) {
+        for (Piece piece : pieceList) {
             piece.color = Empty;
         }
     }
 
     private void determinePieceNextMove(Piece piece) {
-        Integer[][] directions = { {1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1} };
+        Integer[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
         for (Integer[] dir : directions) {
             int x = piece.x + dir[0];
             int y = piece.y + dir[1];
@@ -112,8 +108,8 @@ public class Board {
 
     private ArrayList<Piece> createPieceList(Color color) {
         ArrayList<Piece> pieceList = new ArrayList<Piece>();
-        for (int i = 0; i < 8; i ++)
-            for (int j = 0; j < 8; j ++) {
+        for (int i = 0; i < 8; i++)
+            for (int j = 0; j < 8; j++) {
                 if (boardMap[i][j].color == color)
                     pieceList.add(boardMap[i][j]);
             }
@@ -125,7 +121,7 @@ public class Board {
     }
 
     public void readInput(Player player) {
-        int[] cords={0,0}; //x,y
+        int[] cords = {0, 0}; //x,y
         boolean isValidMove = false;
         while (!isValidMove) {
             try {
@@ -135,7 +131,7 @@ public class Board {
                 }
                 isValidMove = true;
             } catch (Exception e) {
-                if(player.isHuman)
+                if (player.isHuman)
                     System.out.println("Invalid input. Please try again.");
             }
         }
