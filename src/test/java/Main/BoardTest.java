@@ -14,13 +14,13 @@ class BoardTest {
         Board board = new Board(playerWhite, playerBlack);
 
         board.determinePossibleMoves();
-        assertEquals(4, board.getPieceAmount(CanPlace), "Expected 4 possible moves for the Black player.");
+        assertEquals(4, board.getPieceAmount(CanPlace));
 
         Piece[][] boardMap = board.getBoardMap();
-        assertEquals(CanPlace, boardMap[2][3].color, "Expected CanPlace at (2,3).");
-        assertEquals(CanPlace, boardMap[3][2].color, "Expected CanPlace at (3,2).");
-        assertEquals(CanPlace, boardMap[4][5].color, "Expected CanPlace at (4,5).");
-        assertEquals(CanPlace, boardMap[5][4].color, "Expected CanPlace at (5,4).");
+        assertEquals(CanPlace, boardMap[2][3].color);
+        assertEquals(CanPlace, boardMap[3][2].color);
+        assertEquals(CanPlace, boardMap[4][5].color);
+        assertEquals(CanPlace, boardMap[5][4].color);
     }
 
     @Test
@@ -33,10 +33,10 @@ class BoardTest {
         board.executeNextMove(2, 3);
 
         Piece[][] boardMap = board.getBoardMap();
-        assertEquals(Black, boardMap[2][3].color, "Expected Black piece at (2,3).");
-        assertEquals(Black, boardMap[3][3].color, "Expected Black piece at (3,3) (flipped).");
-        assertEquals(Black, boardMap[4][3].color, "Expected Black piece at (4,3) (unchanged).");
-        assertEquals(playerWhite, board.whoseMove, "Expected White's turn after Black's move.");
+        assertEquals(Black, boardMap[2][3].color);
+        assertEquals(Black, boardMap[3][3].color);
+        assertEquals(Black, boardMap[4][3].color);
+        assertEquals(playerWhite, board.whoseMove);
     }
 
     @Test
@@ -49,7 +49,7 @@ class BoardTest {
         board.readInput(playerBlack);
 
         Piece[][] boardMap = board.getBoardMap();
-        assertEquals(Black, boardMap[2][3].color, "Expected Black piece at (2,3).");
-        assertEquals(Black, boardMap[3][3].color, "Expected Black piece at (3,3) (flipped).");
+        assertEquals(Black, boardMap[2][3].color);
+        assertEquals(Black, boardMap[3][3].color);
     }
 }
